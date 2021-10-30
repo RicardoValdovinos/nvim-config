@@ -1,0 +1,8 @@
+require('plugins')
+require('plugins/nvim-cmp')
+require('plugins/nvim-lspconfig')
+require('plugins/nvim-treesitter')
+require('plugins/nvim-autopairs')
+require('plugins/lualine')
+require('plugins/nvim-web-devicons')
+require('settings')
