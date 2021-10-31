@@ -56,3 +56,14 @@ cmd [[autocmd FileType text,markdown,xml,html,xhtml,javascript setlocal cc=0]]
 cmd [[
   autocmd FileType xml,html,xhtml,css,scss,javascript,lua,yaml setlocal shiftwidth=2 tabstop=2
 ]]
+
+-- Provided by setup function
+vim.api.nvim_set_keymap('n', '<silent><leader>f', ':Format<CR>', { noremap = true, silent = true })
+
+vim.api.nvim_exec([[
+augroup FormatAutogroup
+  autocmd!
+  autocmd BufWritePost *.js,*.rs,*.lua FormatWrite
+augroup END
+]], true)
+
