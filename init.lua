@@ -287,13 +287,12 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
 	{
-		"folke/which-key.nvim",
-		event = "VeryLazy",
-		init = function()
-			vim.o.timeout = true
-			vim.o.timeoutlen = 300
-		end,
-		opts = {}
+		-- Highlight, edit, and navigate code
+		'nvim-treesitter/nvim-treesitter',
+		dependencies = {
+			'nvim-treesitter/nvim-treesitter-textobjects',
+		},
+		build = ':TSUpdate',
 	},
 	-- NOTE: This is where your plugins related to LSP can be installed.
 	--  The configuration is done below. Search for lspconfig to find it below.
@@ -328,6 +327,15 @@ require("lazy").setup({
 			'rafamadriz/friendly-snippets',
 		},
 	},
+	{
+		"folke/which-key.nvim",
+		event = "VeryLazy",
+		init = function()
+			vim.o.timeout = true
+			vim.o.timeoutlen = 300
+		end,
+		opts = {}
+	},
 	-- Fuzzy Finder (files, lsp, etc)
 	{
 		'nvim-telescope/telescope.nvim',
@@ -348,6 +356,20 @@ require("lazy").setup({
 			},
 		},
 	},
+	{
+		-- Add indentation guides even on blank lines
+		'lukas-reineke/indent-blankline.nvim',
+		-- Enable `lukas-reineke/indent-blankline.nvim`
+		-- See `:help indent_blankline.txt`
+		opts = {
+			char = '┊',
+			show_trailing_blankline_indent = false,
+		},
+	},
+
+	-- "gc" to comment visual regions/lines
+	{ 'numToStr/Comment.nvim', opts = {} },
+
 	-- UI
 	{
 		"folke/tokyonight.nvim",
@@ -387,10 +409,10 @@ require("lazy").setup({
 			end,
 		},
 	},
-	{ 
+	{
 		'nvim-lualine/lualine.nvim',
 		dependencies = { 'nvim-tree/nvim-web-devicons' }
-	}
+	},
 })
 
 
@@ -415,11 +437,11 @@ require 'cmp'.setup {
 }
 -- Lua
 require('lualine').setup {
-  options = {
-    -- ... your lualine config
-    theme = 'tokyonight'
-    -- ... your lualine config
-  }
+	options = {
+		-- ... your lualine config
+		theme = 'tokyonight'
+		-- ... your lualine config
+	}
 }
 
 -- [[ Configure Telescope ]]
@@ -455,6 +477,72 @@ keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '
 keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+
+-- [[ Configure Treesitter ]]
+-- See `:help nvim-treesitter`
+require('nvim-treesitter.configs').setup {
+	-- Add languages to be installed here that you want installed for treesitter
+	ensure_installed = { 'go', 'lua', 'rust', 'typescript', 'tsx', 'javascript', 'json', 'vimdoc', 'vim' },
+
+	-- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
+	auto_install = false,
+
+	highlight = { enable = true },
+	indent = { enable = true },
+	incremental_selection = {
+		enable = true,
+		keymaps = {
+			init_selection = '<c-space>',
+			node_incremental = '<c-space>',
+			scope_incremental = '<c-s>',
+			node_decremental = '<M-space>',
+		},
+	},
+	textobjects = {
+		select = {
+			enable = true,
+			lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+			keymaps = {
+				-- You can use the capture groups defined in textobjects.scm
+				['aa'] = '@parameter.outer',
+				['ia'] = '@parameter.inner',
+				['af'] = '@function.outer',
+				['if'] = '@function.inner',
+				['ac'] = '@class.outer',
+				['ic'] = '@class.inner',
+			},
+		},
+		move = {
+			enable = true,
+			set_jumps = true, -- whether to set jumps in the jumplist
+			goto_next_start = {
+				[']m'] = '@function.outer',
+				[']]'] = '@class.outer',
+			},
+			goto_next_end = {
+				[']M'] = '@function.outer',
+				[']['] = '@class.outer',
+			},
+			goto_previous_start = {
+				['[m'] = '@function.outer',
+				['[['] = '@class.outer',
+			},
+			goto_previous_end = {
+				['[M'] = '@function.outer',
+				['[]'] = '@class.outer',
+			},
+		},
+		swap = {
+			enable = true,
+			swap_next = {
+				['<leader>a'] = '@parameter.inner',
+			},
+			swap_previous = {
+				['<leader>A'] = '@parameter.inner',
+			},
+		},
+	},
+}
 
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
@@ -581,4 +669,4 @@ cmp.setup {
 }
 
 --[[UI]]
-cmd[[colorscheme tokyonight-night]]
+cmd [[colorscheme tokyonight-night]]
