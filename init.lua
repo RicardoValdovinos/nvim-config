@@ -290,6 +290,14 @@ require('lazy').setup({
   -- { import = 'custom.plugins' },
 }, {})
 
+-- Buffer Keymaps
+vim.keymap.set('n', '<leader>bd', ':bdelete<cr>', { desc = '[B]uffer [D]elete' })
+vim.keymap.set('n', '<leader>ba', ':%bdelete<cr>', { desc = '[B]uffer delete [A]ll' })
+vim.keymap.set('n', '<leader>bo', ':%bdelete | e # | normal `"<cr>',
+  { desc = '[B]uffer delete [O]thers' })
+vim.keymap.set('n', '<leader>bp', ':bprevious<cr>', { desc = '[B]uffer [P]revious' })
+vim.keymap.set('n', '<leader>bn', ':bnext<cr>', { desc = '[B]uffer [N]ext' })
+
 -- [[ Color Scheme ]]
 vim.cmd [[colorscheme tokyonight]]
 
